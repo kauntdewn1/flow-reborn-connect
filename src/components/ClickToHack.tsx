@@ -1,5 +1,5 @@
 import React from 'react';
-import './app.css';
+import '../app.css';
 
 interface ClickToHackProps {
   onHackSuccess: (xpGained: number, fragmentsGained: number) => void;
