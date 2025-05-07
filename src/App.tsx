@@ -2,155 +2,123 @@ import React, { useState, useEffect } from 'react';
 import ClickToHack from './components/ClickToHack';
 import DebtBar from './components/DebtBar';
 import MissionUnlock, { Mission } from './components/MissionUnlock';
-import { TonConnectButton, useTonConnectUI, useTonWallet } from '@tonconnect/ui-react'; // Import TON Connect components and hooks
-import { motion } from 'framer-motion'; // Importar motion
+import { TonConnectButton, useTonConnectUI, useTonWallet } from '@tonconnect/ui-react';
+import { motion } from 'framer-motion';
 
-// Definição de Níveis (exemplo)
 const levels = [
-  { name: "Recruta Falido", xpRequired: 0, visualEffect: "Tela tremando", motionVariant: "screenShake" }, // Usará framer-motion
-  { name: "Executor da Escassez", xpRequired: 100, visualEffect: "Texto rasgado ao fundo", effectClass: "text-glitch-background-effect" }, // Continuará com CSS
-  { name: "Alquimista da Urgência", xpRequired: 500, visualEffect: "Terminal ganhando brilho", effectClass: "terminal-glow-effect" }, // Continuará com CSS
-  // Adicione mais níveis conforme seu plano
+  { name: "Recruta Falido", xpRequired: 0, visualEffect: "Tela tremando", motionVariant: "screenShake" },
+  { name: "Executor da Escassez", xpRequired: 100, visualEffect: "Texto rasgado ao fundo", effectClass: "text-glitch-background-effect" },
+  { name: "Alquimista da Urgência", xpRequired: 500, visualEffect: "Terminal ganhando brilho", effectClass: "terminal-glow-effect" },
 ];
 
 function App() {
-  const initialDebtAmount = 10000; // Dívida inicial de -10.000 TON
+  const initialDebtAmount = 10000;
   const [xp, setXp] = useState<number>(0);
   const [fragments, setFragments] = useState<number>(0);
   const [currentDebt, setCurrentDebt] = useState<number>(initialDebtAmount);
   const [currentLevel, setCurrentLevel] = useState(levels[0]);
   const [appKey, setAppKey] = useState(0);
-  const [activeVisualEffectClass, setActiveVisualEffectClass] = useState<string>(''); // Supondo que você renomeou para isso
+  const [activeVisualEffectClass, setActiveVisualEffectClass] = useState<string>('');
   const [activeMotionVariant, setActiveMotionVariant] = useState<string>('idle');
-  const [missions, setMissions] = useState<Mission[]>([]); // Define missions state
-  const wallet = useTonWallet(); // Get wallet instance
+  const [missions, setMissions] = useState<Mission[]>([]);
+  const wallet = useTonWallet();
 
   useEffect(() => {
-    // Salvar dados no localStorage quando mudarem
     localStorage.setItem('rebornGrinderXp', xp.toString());
     localStorage.setItem('rebornGrinderFragments', fragments.toString());
     localStorage.setItem('rebornGrinderDebt', currentDebt.toString());
     localStorage.setItem('rebornGrinderMissions', JSON.stringify(missions.map(m => ({id: m.id, isCompleted: m.isCompleted}))));
 
-    // Lógica de Nível
     const newLevel = levels.slice().reverse().find(level => xp >= level.xpRequired) || levels[0];
     if (newLevel.name !== currentLevel.name) {
       setCurrentLevel(newLevel);
-      console.log(`Novo Nível: ${newLevel.name}! Efeito: ${newLevel.visualEffect}`);
-      setActiveVisualEffectClass(newLevel.effectClass || ''); // Corrected function call
-      setActiveMotionVariant(newLevel.motionVariant || 'idle'); // Add this line to update motion variant
+      setActiveVisualEffectClass(newLevel.effectClass || '');
+      setActiveMotionVariant(newLevel.motionVariant || 'idle');
     } else if (xp === 0 && levels[0].effectClass && activeVisualEffectClass !== levels[0].effectClass) {
-      // Ensure initial effect is set if starting at level 0 with an effect
       setActiveVisualEffectClass(levels[0].effectClass);
-      setActiveMotionVariant(levels[0].motionVariant || 'idle'); // Add this line for initial motion variant
+      setActiveMotionVariant(levels[0].motionVariant || 'idle');
     } else if (xp > 0 && !newLevel.effectClass && activeVisualEffectClass !== '') {
-      // Clear effect if the new level has no effectClass defined
       setActiveVisualEffectClass('');
-      // Optionally reset motion variant to idle or a default
-      setActiveMotionVariant('idle'); // Add this line to reset motion variant
+      setActiveMotionVariant('idle');
     }
-
-  }, [xp, fragments, currentDebt, currentLevel.name, missions, activeVisualEffectClass, activeMotionVariant]); // Added activeMotionVariant to dependency array
-
+  }, [xp, fragments, currentDebt, currentLevel.name, missions, activeVisualEffectClass, activeMotionVariant]);
 
   useEffect(() => {
-    // Carregar dados do localStorage se existirem
     const savedXp = localStorage.getItem('rebornGrinderXp');
     const savedFragments = localStorage.getItem('rebornGrinderFragments');
     const savedDebt = localStorage.getItem('rebornGrinderDebt');
     const savedMissionsState = localStorage.getItem('rebornGrinderMissions');
 
     if (savedXp) {
-        const loadedXp = parseInt(savedXp, 10);
-        setXp(loadedXp);
-        // Determine initial level and effect based on loaded XP
-        const initialLevelOnLoad = levels.slice().reverse().find(level => loadedXp >= level.xpRequired) || levels[0];
-        setCurrentLevel(initialLevelOnLoad);
-        setActiveMotionVariant(initialLevelOnLoad.motionVariant || 'idle');
-        setActiveVisualEffectClass(initialLevelOnLoad.effectClass || '');
+      const loadedXp = parseInt(savedXp, 10);
+      setXp(loadedXp);
+      const initialLevelOnLoad = levels.slice().reverse().find(level => loadedXp >= level.xpRequired) || levels[0];
+      setCurrentLevel(initialLevelOnLoad);
+      setActiveMotionVariant(initialLevelOnLoad.motionVariant || 'idle');
+      setActiveVisualEffectClass(initialLevelOnLoad.effectClass || '');
     }
     if (savedFragments) setFragments(parseInt(savedFragments, 10));
     if (savedDebt) setCurrentDebt(parseInt(savedDebt, 10));
     if (savedMissionsState) {
       try {
         const completedMissionInfo: Array<{id: string, isCompleted: boolean}> = JSON.parse(savedMissionsState);
-        // Assuming initialMissions is defined elsewhere or you want to initialize it here
-        // For now, let's ensure setMissions is used correctly if initialMissions were available
-        // If initialMissions is not available, you might need to fetch/define them first
-        // For example, if missions are static or fetched:
-        // const initialMissionsData: Mission[] = []; // Define or fetch your initial missions
-        setMissions(prevInitialMissions => { // prevInitialMissions will be the current state of missions
-            // If you have a predefined list of all possible missions, map through that
-            // Otherwise, if you only store completed ones and want to reconstruct,
-            // this logic might need adjustment based on how `missions` are structured.
-            // This example assumes `prevInitialMissions` is the base list to update.
-            return prevInitialMissions.map(initialMission => {
-                const savedState = completedMissionInfo.find(s => s.id === initialMission.id);
-                return savedState ? { ...initialMission, isCompleted: savedState.isCompleted } : initialMission;
-            });
+        setMissions(prevInitialMissions => {
+          return prevInitialMissions.map(initialMission => {
+            const savedState = completedMissionInfo.find(s => s.id === initialMission.id);
+            return savedState ? { ...initialMission, isCompleted: savedState.isCompleted } : initialMission;
+          });
         });
       } catch (error) {
         console.error("Erro ao carregar estado das missões do localStorage:", error);
       }
     }
-  }, []); // Executa apenas uma vez ao montar o componente
-
+  }, []);
 
   const handleHackSuccess = (xpGained: number, fragmentsGained: number) => {
     setXp(prevXp => prevXp + xpGained);
     setFragments(prevFragments => prevFragments + fragmentsGained);
-    // Aqui você pode adicionar lógica para reduzir a dívida com missões, etc.
-    // Por enquanto, o hack só dá XP e fragmentos.
   };
 
-  // Função para simular pagamento de missão (exemplo)
   const completeMissionPayment = (amountPaid: number) => {
     setCurrentDebt(prevDebt => Math.max(0, prevDebt - amountPaid));
-    // Adicionar som de "alívio digital"
   };
 
-    function handlePayDebtWithTon(arg0: number): void {
-        throw new Error('Function not implemented.');
-    }
+  function handlePayDebtWithTon(arg0: number): void {
+    throw new Error('Function not implemented.');
+  }
 
   return (
-    <motion.div 
+    <motion.div
       key={appKey}
       className={`app-container bg-terminal-bg text-primary-text min-h-screen font-mono p-4 flex flex-col items-center ${activeVisualEffectClass}`}
       variants={{
-        idle: {
-          scale: 1
-        },
+        idle: { scale: 1 },
         screenShake: {
           x: [-2, 2, -2, 2, 0],
-          transition: {
-            duration: 0.5,
-            repeat: Infinity
-          }
+          transition: { duration: 0.5, repeat: Infinity }
         }
       }}
-      animate={activeMotionVariant} 
+      animate={activeMotionVariant}
     >
       <header className="w-full max-w-4xl mx-auto px-4 text-center mb-6 flex justify-between items-center">
         <div className="flex-shrink-0">
-           <img src="/logo.png" alt="Reborn Grinder Logo" className="h-10 md:h-12" />
+          <img src="/logo.png" alt="Reborn Grinder Logo" className="h-10 md:h-12" />
         </div>
-        
-        <h1 className="flex-grow text-2xl sm:text-3xl md:text-4xl font-bold text-accent-glitch animate-pulse text-center px-2">
+        <h1 className="text-4xl md:text-5xl font-black text-accent-glitch animate-pulse bg-gradient-to-r from-accent-glitch to-danger-text bg-clip-text text-transparent">
           REBORN GRINDER // SYSTEM32.EXE
         </h1>
-        
         <div className="flex-shrink-0">
           <TonConnectButton />
         </div>
       </header>
 
       <main className="w-full max-w-md">
-        {wallet && ( // Check if wallet exists before trying to access its properties
+        {wallet && (
           <div className="my-2 p-2 bg-black/70 border border-primary-text/30 rounded text-center text-xs">
             Carteira Conectada: <span className="text-accent-glitch">{`${wallet.account.address.slice(0, 6)}...${wallet.account.address.slice(-4)}`}</span> ({wallet.device.appName})
           </div>
         )}
+
         <div className="mb-4 p-3 bg-black/50 rounded-lg border border-primary-text/30">
           <div className="flex justify-between text-lg">
             <span>Nível: <span className="text-accent-glitch font-semibold">{currentLevel.name}</span></span>
@@ -158,22 +126,21 @@ function App() {
           </div>
           <div className="text-sm">Fragmentos Corrompidos: <span className="text-primary-text font-semibold">{fragments.toLocaleString()}</span></div>
         </div>
-        
+
         <DebtBar currentDebt={currentDebt} initialDebt={initialDebtAmount} />
 
-        {/* Botão para pagar dívida com TON (exemplo) */}
-        {wallet && currentDebt > 0 && ( // Check if wallet exists
+        {wallet && currentDebt > 0 && (
           <button
-            onClick={() => handlePayDebtWithTon(100)} // Pagar 100 TON de exemplo
-            className="my-4 w-full p-2 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded shadow-lg shadow-blue-500/30 transition-all"
+            onClick={() => handlePayDebtWithTon(100)}
+            className="w-full my-4 py-3 px-6 bg-gradient-to-r from-accent-glitch to-danger-text text-black font-bold rounded-xl border-2 border-accent-glitch hover:from-danger-text hover:to-accent-glitch transition-all duration-300 shadow-lg shadow-accent-glitch/30"
           >
-            Pagar 100 TON da Dívida com Carteira
+            💸 Quitar 100 TON da Dívida
           </button>
         )}
-        
+
         <ClickToHack onHackSuccess={handleHackSuccess} />
 
-        <MissionUnlock 
+        <MissionUnlock
           availableMissions={missions.filter(m => !m.isCompleted)}
           currentLevelName={currentLevel.name}
           currentXp={xp}
@@ -188,4 +155,5 @@ function App() {
     </motion.div>
   );
 }
+
 export default App;
