@@ -25,6 +25,12 @@ const levels = [
   { name: "Lorde Glitch", xpRequired: 10000 }
 ];
 
+function getProgressBar(percent: number, size = 10) {
+  const filled = Math.round((percent / 100) * size);
+  const empty = size - filled;
+  return `[${'█'.repeat(filled)}${'░'.repeat(empty)}] ${percent.toFixed(0)}%`;
+}
+
 function App() {
   const initialDebtAmount = 10000;
   const [xp, setXp] = useState<number>(0);
@@ -128,12 +134,31 @@ function App() {
       </header>
 
       <main className="relative z-10 w-full max-w-md space-y-6">
-        <div className="bg-black/70 p-4 rounded-xl border border-cyan-400/30">
-          <p className="text-center text-lg font-bold text-accent-glitch">{currentLevel.name}</p>
-          <div className="h-2 w-full bg-gray-700 rounded-full mt-2">
-            <div className="h-2 rounded-full bg-gradient-to-r from-accent-glitch to-danger-text" style={{ width: `${progressPercent}%` }}></div>
+        <div className="mb-2 font-mono text-xs text-cyan-400 flex flex-col gap-1">
+          <div>
+            <span className="text-white">[ID: </span>
+            <span className="text-accent-glitch">UQBj...8id</span>
+            <span className="text-white">]</span>
+            <span className="ml-2">[STATUS: <span className="text-yellow-400">INDEFINIDO</span>]</span>
           </div>
-          <p className="text-xs text-center text-gray-400 mt-1">XP: {xp.toLocaleString()} | Próximo em: {timerCountdown}</p>
+          <div>
+            <span className="text-pink-500">↯</span> PROTOCOLO ATIVO <span className="ml-2 text-gray-400">[!]</span>
+          </div>
+          <div>
+            <span className="text-gray-400">&gt;&gt;</span> <span className="text-cyan-300">Terminal seguro</span> <span className="ml-2 text-fuchsia-400">Ω</span>
+          </div>
+        </div>
+
+        <div className="bg-black/70 p-4 rounded-xl border border-cyan-400/30 text-left font-mono">
+          <div className="whitespace-pre leading-tight">
+            <span className="text-accent-glitch font-bold">&gt; {currentLevel.name.toUpperCase()}</span>{"  "}
+            <br />
+            XP: {xp} {getProgressBar(progressPercent)}
+            <br />
+            PRÓXIMO: {timerCountdown}
+            <br />
+            DÍVIDA: {currentDebt.toLocaleString()} TON
+          </div>
         </div>
 
         <DebtBar currentDebt={currentDebt} initialDebt={initialDebtAmount} />
