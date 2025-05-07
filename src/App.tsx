@@ -27,7 +27,7 @@ function App() {
     localStorage.setItem('rebornGrinderXp', xp.toString());
     localStorage.setItem('rebornGrinderFragments', fragments.toString());
     localStorage.setItem('rebornGrinderDebt', currentDebt.toString());
-    localStorage.setItem('rebornGrinderMissions', JSON.stringify(missions.map(m => ({id: m.id, isCompleted: m.isCompleted}))));
+    localStorage.setItem('rebornGrinderMissions', JSON.stringify(missions.map(m => ({ id: m.id, isCompleted: m.isCompleted }))));
 
     const newLevel = levels.slice().reverse().find(level => xp >= level.xpRequired) || levels[0];
     if (newLevel.name !== currentLevel.name) {
@@ -61,7 +61,7 @@ function App() {
     if (savedDebt) setCurrentDebt(parseInt(savedDebt, 10));
     if (savedMissionsState) {
       try {
-        const completedMissionInfo: Array<{id: string, isCompleted: boolean}> = JSON.parse(savedMissionsState);
+        const completedMissionInfo: Array<{ id: string, isCompleted: boolean }> = JSON.parse(savedMissionsState);
         setMissions(prevInitialMissions => {
           return prevInitialMissions.map(initialMission => {
             const savedState = completedMissionInfo.find(s => s.id === initialMission.id);
@@ -90,7 +90,7 @@ function App() {
   return (
     <motion.div
       key={appKey}
-      className={`app-container bg-terminal-bg text-primary-text min-h-screen font-mono p-4 flex flex-col items-center ${activeVisualEffectClass}`}
+      className={`relative app-container bg-black text-primary-text min-h-screen font-mono p-4 flex flex-col items-center justify-center overflow-hidden ${activeVisualEffectClass}`}
       variants={{
         idle: { scale: 1 },
         screenShake: {
@@ -100,11 +100,19 @@ function App() {
       }}
       animate={activeMotionVariant}
     >
-      <header className="w-full max-w-4xl mx-auto px-4 text-center mb-6 flex justify-between items-center">
+      {/* Background animado */}
+      <motion.div
+        className="absolute inset-0 z-0 bg-cover bg-center opacity-20"
+        style={{ backgroundImage: 'url("https://res.cloudinary.com/dgyocpguk/image/upload/v1745630512/1_hbyge2.png")' }}
+        animate={{ scale: [1, 1.02, 1], y: [0, -20, 0] }}
+        transition={{ duration: 20, repeat: Infinity, ease: 'easeInOut' }}
+      />
+
+      <header className="relative z-10 w-full max-w-4xl mx-auto px-4 text-center mb-8 flex justify-between items-center">
         <div className="flex-shrink-0">
           <img src="/logo.png" alt="Reborn Grinder Logo" className="h-10 md:h-12" />
         </div>
-        <h1 className="text-4xl md:text-5xl font-black text-accent-glitch animate-pulse bg-gradient-to-r from-accent-glitch to-danger-text bg-clip-text text-transparent">
+        <h1 className="text-3xl md:text-5xl font-extrabold bg-gradient-to-r from-accent-glitch to-danger-text bg-clip-text text-transparent tracking-wide">
           REBORN GRINDER // SYSTEM32.EXE
         </h1>
         <div className="flex-shrink-0">
@@ -112,19 +120,19 @@ function App() {
         </div>
       </header>
 
-      <main className="w-full max-w-md">
+      <main className="relative z-10 w-full max-w-md space-y-6">
         {wallet && (
-          <div className="my-2 p-2 bg-black/70 border border-primary-text/30 rounded text-center text-xs">
+          <div className="p-3 bg-black/80 border border-cyan-400/30 rounded text-center text-xs">
             Carteira Conectada: <span className="text-accent-glitch">{`${wallet.account.address.slice(0, 6)}...${wallet.account.address.slice(-4)}`}</span> ({wallet.device.appName})
           </div>
         )}
 
-        <div className="mb-4 p-3 bg-black/50 rounded-lg border border-primary-text/30">
-          <div className="flex justify-between text-lg">
-            <span>Nível: <span className="text-accent-glitch font-semibold">{currentLevel.name}</span></span>
-            <span>XP: <span className="text-primary-text font-semibold">{xp.toLocaleString()}</span></span>
+        <div className="p-4 bg-black/70 rounded-xl border border-cyan-400/20 shadow-lg">
+          <div className="flex justify-between text-lg mb-1">
+            <span>Nível: <span className="text-accent-glitch font-bold">{currentLevel.name}</span></span>
+            <span>XP: <span className="text-primary-text font-bold">{xp.toLocaleString()}</span></span>
           </div>
-          <div className="text-sm">Fragmentos Corrompidos: <span className="text-primary-text font-semibold">{fragments.toLocaleString()}</span></div>
+          <div className="text-sm text-gray-300">Fragmentos Corrompidos: <span className="text-primary-text font-semibold">{fragments.toLocaleString()}</span></div>
         </div>
 
         <DebtBar currentDebt={currentDebt} initialDebt={initialDebtAmount} />
@@ -132,7 +140,7 @@ function App() {
         {wallet && currentDebt > 0 && (
           <button
             onClick={() => handlePayDebtWithTon(100)}
-            className="w-full my-4 py-3 px-6 bg-gradient-to-r from-accent-glitch to-danger-text text-black font-bold rounded-xl border-2 border-accent-glitch hover:from-danger-text hover:to-accent-glitch transition-all duration-300 shadow-lg shadow-accent-glitch/30"
+            className="w-full py-3 px-6 bg-gradient-to-br from-red-600 via-red-500 to-red-700 text-white rounded-xl border-2 border-red-800 shadow-[0_0_20px_rgba(255,0,0,0.4)] hover:scale-105 transition-transform font-bold"
           >
             💸 Quitar 100 TON da Dívida
           </button>
@@ -146,8 +154,8 @@ function App() {
         />
       </main>
 
-      <footer className="w-full max-w-2xl text-center mt-auto pt-6">
-        <p className="text-xs text-primary-text/60">
+      <footer className="relative z-10 w-full max-w-2xl text-center mt-auto pt-6">
+        <p className="text-xs text-primary-text/60 uppercase tracking-wider">
           Interface corrompida. Prossiga por sua conta e risco.
         </p>
       </footer>
