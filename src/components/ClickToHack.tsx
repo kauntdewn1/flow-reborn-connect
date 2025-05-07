@@ -1,60 +1,34 @@
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React from 'react';
+import './app.css';
 
 interface ClickToHackProps {
-  onHackSuccess: (xp: number, fragments: number) => void;
+  onHackSuccess: (xpGained: number, fragmentsGained: number) => void;
 }
 
-export default function ClickToHack({ onHackSuccess }: ClickToHackProps) {
-  const [isHacking, setIsHacking] = useState(false);
-  const [feedbackText, setFeedbackText] = useState<string | null>(null);
-  const [feedbackKey, setFeedbackKey] = useState(0); // To re-trigger animation
-
+const ClickToHack: React.FC<ClickToHackProps> = ({ onHackSuccess }) => {
   const handleClick = () => {
-    if (isHacking) return;
-    
-    setIsHacking(true);
-    const xpGained = Math.floor(Math.random() * 10) + 1;
-    const fragmentsGained = Math.floor(Math.random() * 5) + 1;
-    
-    onHackSuccess(xpGained, fragmentsGained);
-    
-    const feedback = `+${xpGained} XP, +${fragmentsGained} Frag.`;
-    setFeedbackText(feedback);
-    setFeedbackKey(prev => prev + 1); // Increment key to re-trigger animation
-    
-    setTimeout(() => {
-      setIsHacking(false);
-    }, 1000);
+    const xp = Math.floor(Math.random() * 20) + 10;
+    const fragments = Math.floor(Math.random() * 5) + 1;
+    onHackSuccess(xp, fragments);
   };
 
   return (
-    <div className="relative">
-      <div className="circle-outer" onClick={handleClick}>
+    <div className="flex flex-col items-center justify-center mt-6">
+      <div className="circle-outer relative cursor-pointer" onClick={handleClick}>
         <div className="circle-inner">
-          <img src="/hacker.png" alt="Hacker" className="w-32 h-32 object-contain" />
+          <img
+            src="/assets/MainTerminal.png"
+            alt="Terminal Glitch Hacker"
+            className="w-full h-full object-contain"
+          />
         </div>
+        {/* Removido o uso de IconHack pois não está definido/importado */}
       </div>
-      <div className="dot"></div>
-      {isHacking && (
-        <div className="absolute float-xp text-3xl font-bold text-accent-glitch">+XP</div>
-      )}
-      <AnimatePresence>
-        {feedbackText && (
-          <motion.div
-            key={feedbackKey} // Use key to re-mount and re-animate
-            initial={{ opacity: 0, y: 20, scale: 0.5 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -20, scale: 0.5, transition: { duration: 0.4 } }}
-            className="mt-3 text-sm text-primary-text font-semibold bg-black/50 px-3 py-1 rounded"
-          >
-            {feedbackText}
-          </motion.div>
-        )}
-      </AnimatePresence>
-      <p className="mt-2 text-xs text-primary-text/70">
-        Clique para simular uma tentativa de hack.
+      <p className="mt-2 text-xs text-accent-glitch uppercase tracking-wider">
+        Toque no núcleo para executar o ataque
       </p>
     </div>
   );
-}
+};
+
+export default ClickToHack;

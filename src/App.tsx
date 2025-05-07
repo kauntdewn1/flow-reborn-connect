@@ -4,7 +4,15 @@ import DebtBar from './components/DebtBar';
 import MissionUnlock from './components/MissionUnlock';
 import { TonConnectButton, useTonWallet } from '@tonconnect/ui-react';
 import { motion } from 'framer-motion';
-import './app.css';
+
+type Mission = {
+  id: string;
+  title: string;
+  description: string;
+  isCompleted: boolean;
+  rewardXp: number;
+  rewardFragments: number;
+};
 
 const levels = [
   { name: "Recruta Falido", xpRequired: 0 },
@@ -24,22 +32,33 @@ function App() {
   const [appKey] = useState(0);
   const [clicks, setClicks] = useState<{ id: number, x: number, y: number }[]>([]);
   const [timerCountdown, setTimerCountdown] = useState('');
+  const [missions, setMissions] = useState<Mission[]>([]);
   const wallet = useTonWallet();
 
   useEffect(() => {
     const savedXp = localStorage.getItem('rebornGrinderXp');
     const savedFragments = localStorage.getItem('rebornGrinderFragments');
     const savedDebt = localStorage.getItem('rebornGrinderDebt');
+    const savedMissionsState = localStorage.getItem('rebornGrinderMissions');
 
     if (savedXp) setXp(parseInt(savedXp, 10));
     if (savedFragments) setFragments(parseInt(savedFragments, 10));
     if (savedDebt) setCurrentDebt(parseInt(savedDebt, 10));
+    if (savedMissionsState) {
+      try {
+        const missionList: Mission[] = JSON.parse(savedMissionsState);
+        setMissions(missionList);
+      } catch (e) {
+        console.error('Erro ao carregar missões salvas', e);
+      }
+    }
   }, []);
 
   useEffect(() => {
     localStorage.setItem('rebornGrinderXp', xp.toString());
     localStorage.setItem('rebornGrinderFragments', fragments.toString());
     localStorage.setItem('rebornGrinderDebt', currentDebt.toString());
+    localStorage.setItem('rebornGrinderMissions', JSON.stringify(missions));
 
     const newLevel = levels.slice().reverse().find(level => xp >= level.xpRequired) || levels[0];
     setCurrentLevel(newLevel);
@@ -50,7 +69,7 @@ function App() {
     const nextXP = nextLevel ? nextLevel.xpRequired : xp;
     const progress = nextLevel ? ((xp - prevXP) / (nextXP - prevXP)) * 100 : 100;
     setProgressPercent(Math.min(100, Math.max(0, progress)));
-  }, [xp, fragments, currentDebt]);
+  }, [xp, fragments, currentDebt, missions]);
 
   useEffect(() => {
     const now = new Date();
@@ -76,8 +95,10 @@ function App() {
     setClicks([...clicks, { id: Date.now(), x: Math.random() * window.innerWidth, y: Math.random() * window.innerHeight }]);
   };
 
-  const handleAnimationEnd = (id: number) => {
-    setClicks(prev => prev.filter(click => click.id !== id));
+  const handleMissionComplete = (missionId: string, gainedXp: number, gainedFragments: number) => {
+    setXp(prev => prev + gainedXp);
+    setFragments(prev => prev + gainedFragments);
+    setMissions(prev => prev.map(m => m.id === missionId ? { ...m, isCompleted: true } : m));
   };
 
   function handlePayDebtWithTon(amount: number): void {
@@ -114,7 +135,10 @@ function App() {
 
         <ClickToHack onHackSuccess={handleHackSuccess} />
 
-        <MissionUnlock availableMissions={[]} currentXp={xp} />
+        <MissionUnlock
+          availableMissions={missions.filter(m => !m.isCompleted)}
+          onMissionComplete={handleMissionComplete}
+        />
       </main>
 
       <footer className="relative z-10 w-full max-w-2xl text-center mt-auto pt-6">
@@ -124,7 +148,7 @@ function App() {
       </footer>
 
       {clicks.map((click) => (
-        <div key={click.id} className="absolute text-3xl font-bold text-accent-glitch pointer-events-none animate-pulse" style={{ top: `${click.y}px`, left: `${click.x}px` }} onAnimationEnd={() => handleAnimationEnd(click.id)}>
+        <div key={click.id} className="absolute text-3xl font-bold text-accent-glitch pointer-events-none animate-pulse" style={{ top: `${click.y}px`, left: `${click.x}px` }}>
           +XP
         </div>
       ))}
