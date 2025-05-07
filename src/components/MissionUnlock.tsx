@@ -17,11 +17,10 @@ export interface Mission {
 
 interface MissionUnlockProps {
   availableMissions: Mission[];
-  currentLevelName: string; // To potentially show level-gated missions
   currentXp: number; // To check if mission can be undertaken
 }
 
-const MissionUnlock: React.FC<MissionUnlockProps> = ({ availableMissions, currentLevelName, currentXp }) => {
+const MissionUnlock: React.FC<MissionUnlockProps> = ({ availableMissions, currentXp }) => {
   const [expandedMissionId, setExpandedMissionId] = useState<string | null>(null);
 
   const handleToggleMission = (missionId: string) => {

@@ -7,9 +7,6 @@ interface DebtBarProps {
 
 const DebtBar: React.FC<DebtBarProps> = ({ currentDebt, initialDebt }) => {
   const debtPercentage = initialDebt > 0 ? Math.max(0, (currentDebt / initialDebt) * 100) : 0;
-  // Garante que a dívida não seja negativa para a barra e que o progresso seja de "quitação"
-  const progressPercentage = initialDebt > 0 ? Math.max(0, 100 - (currentDebt / initialDebt) * 100) : 100;
-
 
   return (
     <div className="my-4 p-3 bg-black/30 border border-alert-red/50 rounded-lg shadow-md shadow-alert-red/20">
