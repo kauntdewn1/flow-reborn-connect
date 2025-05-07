@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion'; // Import motion and AnimatePresence
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface ClickToHackProps {
   onHackSuccess: (xp: number, fragments: number) => void;
