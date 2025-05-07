@@ -1,28 +1,41 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
   <head>
-    <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
-    <meta
-      name="description"
-      content="Web site created using create-react-app"
-    />
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    
-    {/* Adicionar Google Fonts aqui */}
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;700&display=swap" rel="stylesheet">
-    {/* Se você também estiver usando Inter, pode adicioná-la aqui também */}
-    {/* <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Source+Code+Pro:wght@400;700&display=swap" rel="stylesheet"> */}
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="REBORN GRINDER - Sistema de hacking digital com economia descentralizada" />
+    <meta name="theme-color" content="#0D0D0D" />
+    <title>REBORN GRINDER // SYSTEM32.EXE</title>
 
-    <title>React App</title>
+    <!-- Fonte Monoespaçada -->
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&display=swap" rel="stylesheet" />
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Custom Tailwind Config Inline (opcional para protótipo) -->
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'accent-glitch': '#00FFFF',
+              'danger-text': '#FF0055',
+              'primary-text': '#E0E0E0',
+              'terminal-bg': '#0D0D0D',
+            },
+            fontFamily: {
+              mono: ['"Fira Code"', 'monospace'],
+            },
+          },
+        }
+      };
+    </script>
+
+    <!-- Ícone -->
+    <link rel="icon" href="/favicon.ico" />
   </head>
-  <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
+  <body class="bg-terminal-bg text-primary-text font-mono">
     <div id="root"></div>
   </body>
 </html>
