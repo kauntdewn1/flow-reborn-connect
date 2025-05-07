@@ -1,22 +1,24 @@
+# 🧠 REBORN GRINDER // SYSTEM32.EXE
 
-## Setup Inicial
+> Sistema interativo de sobrevivência digital com estética glitch e integração Web3.  
+> Desenvolvido por [FlowOFF](https://flowoff.xyz) para mentes que não seguem o padrão.
 
-Para configurar o projeto pela primeira vez, execute o script de setup:
+---
+
+## ⚙️ Tecnologias Utilizadas
+
+- **React + Vite** — Front-end leve e rápido
+- **TailwindCSS** — Estilização utilitária e responsiva
+- **Framer Motion** — Animações com fluidez glitch
+- **TonConnect** — Integração com carteiras TON
+- **Cloudinary** — Armazenamento de assets visuais
+
+---
+
+## 📦 Instalação Local
+
+1. Clone o repositório:
 
 ```bash
-./setup.sh
-```
-
-Este script irá:
-1. Criar a estrutura de diretórios necessária
-2. Instalar todas as dependências requeridas
-3. Configurar o Tailwind CSS
-4. Criar arquivos base necessários
-
-## Desenvolvimento
-
-Para iniciar o servidor de desenvolvimento:
-
-```bash
-npm run dev
-```
+git clone https://github.com/kauntdewn1/flow-reborn-connect.git
+cd seu-repo

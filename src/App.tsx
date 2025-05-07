@@ -5,6 +5,9 @@ import MissionUnlock from './components/MissionUnlock';
 import { TonConnectButton, useTonWallet } from '@tonconnect/ui-react';
 import { motion } from 'framer-motion';
 
+const bgImage = 'https://res.cloudinary.com/decskr6ey/image/upload/v1746600060/bg_geral_otapkg.png';
+const glitchBtn = 'https://res.cloudinary.com/decskr6ey/image/upload/v1746600135/button_glitch_tvrjsr.png';
+
 type Mission = {
   id: string;
   title: string;
@@ -92,7 +95,11 @@ function App() {
   const handleHackSuccess = (xpGained: number, fragmentsGained: number) => {
     setXp(prev => prev + xpGained);
     setFragments(prev => prev + fragmentsGained);
-    setClicks([...clicks, { id: Date.now(), x: Math.random() * window.innerWidth, y: Math.random() * window.innerHeight }]);
+    setClicks([...clicks, {
+      id: Date.now(),
+      x: Math.random() * window.innerWidth,
+      y: Math.random() * window.innerHeight
+    }]);
   };
 
   const handleMissionComplete = (missionId: string, gainedXp: number, gainedFragments: number) => {
@@ -101,13 +108,17 @@ function App() {
     setMissions(prev => prev.map(m => m.id === missionId ? { ...m, isCompleted: true } : m));
   };
 
-  function handlePayDebtWithTon(amount: number): void {
+  const handlePayDebtWithTon = (amount: number) => {
     setCurrentDebt(prev => Math.max(0, prev - amount));
-  }
+  };
 
   return (
     <motion.div key={appKey} className="relative bg-black text-white min-h-screen p-4 flex flex-col items-center justify-center overflow-hidden">
-      <motion.div className="absolute inset-0 z-0 bg-cover bg-center opacity-10" style={{ backgroundImage: 'url("https://res.cloudinary.com/dgyocpguk/image/upload/v1745630512/1_hbyge2.png")' }} animate={{ scale: [1, 1.02, 1], y: [0, -20, 0] }} transition={{ duration: 20, repeat: Infinity }} />
+      <motion.div className="absolute inset-0 z-0 bg-cover bg-center opacity-10"
+        style={{ backgroundImage: `url("${bgImage}")` }}
+        animate={{ scale: [1, 1.02, 1], y: [0, -20, 0] }}
+        transition={{ duration: 20, repeat: Infinity }}
+      />
 
       <header className="relative z-10 w-full max-w-4xl mx-auto text-center mb-6">
         <h1 className="text-4xl md:text-5xl font-black bg-gradient-to-r from-accent-glitch to-danger-text bg-clip-text text-transparent">
@@ -128,7 +139,17 @@ function App() {
         <DebtBar currentDebt={currentDebt} initialDebt={initialDebtAmount} />
 
         {wallet && currentDebt > 0 && (
-          <button onClick={() => handlePayDebtWithTon(100)} className="w-full py-3 px-6 bg-gradient-to-br from-red-600 via-red-500 to-red-700 text-white rounded-xl border-2 border-red-800 shadow-[0_0_20px_rgba(255,0,0,0.4)] hover:scale-105 transition-transform font-bold">
+          <button
+            onClick={() => handlePayDebtWithTon(100)}
+            className="w-full py-3 px-6 rounded-xl border-2 text-white font-bold transition-transform hover:scale-105 shadow-xl"
+            style={{
+              backgroundImage: `url(${glitchBtn})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              borderColor: '#FF0040',
+              boxShadow: '0 0 20px rgba(255,0,64,0.5)'
+            }}
+          >
             💸 Quitar 100 TON da Dívida
           </button>
         )}
@@ -142,13 +163,14 @@ function App() {
       </main>
 
       <footer className="relative z-10 w-full max-w-2xl text-center mt-auto pt-6">
-        <p className="text-xs text-primary-text/60 uppercase tracking-wider">
+        <p className="text-xs text-white/40 uppercase tracking-wider">
           Interface corrompida. Prossiga por sua conta e risco.
         </p>
       </footer>
 
       {clicks.map((click) => (
-        <div key={click.id} className="absolute text-3xl font-bold text-accent-glitch pointer-events-none animate-pulse" style={{ top: `${click.y}px`, left: `${click.x}px` }}>
+        <div key={click.id} className="absolute text-3xl font-bold text-accent-glitch pointer-events-none animate-pulse"
+          style={{ top: `${click.y}px`, left: `${click.x}px` }}>
           +XP
         </div>
       ))}

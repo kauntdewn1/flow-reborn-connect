@@ -1,8 +1,8 @@
-export { default as LogoReborn } from '/public/logo-reborn.png';
-export { default as MainTerminal } from '/public/main-terminal.png';
-export { default as SystemCore } from '/public/system-core.png';
-export { default as GlitchButtonBg } from '/public/glitch-button-bg.png';
-export { default as RewardBox } from '/public/reward-box.png';
-export { default as BadgeLevelUp } from '/public/badge-level-up.png';
-export { default as BgBunker } from '/public/bg-bunker.png';
-export { default as BgNoise } from '/public/bg-noise.png'; 
+export const LogoReborn = 'https://res.cloudinary.com/decskr6ey/image/upload/v1746598594/logo-reborn_pfdio9.png';
+export const MainTerminal = 'https://res.cloudinary.com/decskr6ey/image/upload/v1746600608/mainterminal_qb11xa.png';
+export const SystemCore = 'https://res.cloudinary.com/decskr6ey/image/upload/v1746600952/core_wp7irk.png';
+export const GlitchButtonBg = 'https://res.cloudinary.com/decskr6ey/image/upload/v1746600135/button_glitch_tvrjsr.png';
+export const RewardBox = 'https://res.cloudinary.com/decskr6ey/image/upload/v1746599941/reward_zbcxq9.png';
+export const BadgeLevelUp = 'https://res.cloudinary.com/decskr6ey/image/upload/v1746599800/badget_jyrfck.png';
+export const BgBunker = 'https://res.cloudinary.com/decskr6ey/image/upload/v1746600060/bg_geral_otapkg.png';
+export const BgNoise = 'https://res.cloudinary.com/decskr6ey/image/upload/v1746599498/bg_noise_xow8jw.png';

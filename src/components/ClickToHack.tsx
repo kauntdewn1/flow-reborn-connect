@@ -1,5 +1,4 @@
 import React from 'react';
-import '../app.css';
 
 interface ClickToHackProps {
   onHackSuccess: (xpGained: number, fragmentsGained: number) => void;
@@ -17,12 +16,11 @@ const ClickToHack: React.FC<ClickToHackProps> = ({ onHackSuccess }) => {
       <div className="circle-outer relative cursor-pointer" onClick={handleClick}>
         <div className="circle-inner">
           <img
-            src="/assets/MainTerminal.png"
+            src="https://res.cloudinary.com/decskr6ey/image/upload/v1746600608/mainterminal_qb11xa.png"
             alt="Terminal Glitch Hacker"
             className="w-full h-full object-contain"
           />
         </div>
-        {/* Removido o uso de IconHack pois não está definido/importado */}
       </div>
       <p className="mt-2 text-xs text-accent-glitch uppercase tracking-wider">
         Toque no núcleo para executar o ataque
