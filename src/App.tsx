@@ -102,11 +102,7 @@ function App() {
   const handleHackSuccess = (xpGained: number, fragmentsGained: number) => {
     setXp(prev => prev + xpGained);
     setFragments(prev => prev + fragmentsGained);
-    setClicks([...clicks, {
-      id: Date.now(),
-      x: Math.random() * window.innerWidth,
-      y: Math.random() * window.innerHeight
-    }]);
+    setCurrentDebt(prev => Math.max(0, prev - 100));
   };
 
   const handleMissionComplete = (missionId: string, gainedXp: number, gainedFragments: number) => {
@@ -146,54 +142,23 @@ function App() {
         <span className="text-red-400 font-mono">Dívida: {currentDebt} TON</span>
       </div>
 
-      {/* Barra de dívida dinâmica */}
+      {/* Barra de dívida dinâmica com componente */}
       <div className="relative z-10 flex items-center gap-2 mt-4 mx-auto w-11/12 max-w-lg">
         <img src={iconDebt} className="w-6 h-6" alt="Dívida" />
-        <div className="relative w-full h-4 bg-gray-900 rounded overflow-hidden border border-cyan-400/30">
-          <div
-            className="progress-gradient h-full transition-all duration-500"
-            style={{ width: `${100 - (currentDebt / 10000) * 100}%` }}
-          />
-          <span className="absolute left-2 top-1/2 -translate-y-1/2 text-xs text-cyan-300 font-mono">
-            {currentDebt.toLocaleString()} TON
-          </span>
-        </div>
+        <DebtBar currentDebt={currentDebt} initialDebt={10000} />
       </div>
 
-      {/* Botão de hack glitch */}
+      {/* Botão de hack glitch com ClickToHack */}
       <div className="relative z-10 flex justify-center mt-6">
-        <button
-          className="btn-glitch w-60 py-3 text-lg font-bold tracking-widest flex items-center justify-center gap-2 shadow-xl border-2 border-cyan-400"
-          onClick={() => {
-            setXp(xp + 10);
-            setFragments(fragments + 1);
-            setCurrentDebt(Math.max(0, currentDebt - 100));
-          }}
-          style={{ backgroundImage: `url('${glitchBtn}')`, backgroundSize: 'cover' }}
-        >
-          <img src={iconHack} className="w-6 h-6" alt="Hack" />
-          HACK
-        </button>
+        <ClickToHack onHackSuccess={handleHackSuccess} />
       </div>
 
-      {/* Missões com ícone e badge */}
+      {/* Missões com componente visual aprimorado */}
       <div className="relative z-10 mt-8 mx-auto w-11/12 max-w-lg">
-        <div className="flex items-center gap-2 mb-2">
-          <img src={iconMissions} className="w-5 h-5" alt="Missões" />
-          <span className="font-mono text-cyan-300">Missões</span>
-        </div>
-        <div className="space-y-2">
-          {missions.map(m => (
-            <div
-              key={m.id}
-              className={`flex items-center gap-2 p-2 rounded border ${xp >= m.rewardXp ? 'border-cyan-400 bg-cyan-900/20' : 'border-gray-700 bg-gray-800/40 opacity-60'}`}
-            >
-              <span className="font-bold text-white">{m.title}</span>
-              {m.isCompleted && <img src={badgeLevelUp} className="w-4 h-4" alt="Level Up" />}
-              <span className="ml-auto text-xs text-gray-400">{xp >= m.rewardXp ? '✔️' : '🔒'}</span>
-            </div>
-          ))}
-        </div>
+        <MissionUnlock
+          availableMissions={missions.filter(m => !m.isCompleted)}
+          onMissionComplete={handleMissionComplete}
+        />
       </div>
 
       {/* Overlay scanlines */}
