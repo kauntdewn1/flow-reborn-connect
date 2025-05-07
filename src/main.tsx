@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './App';
+import App from './App.tsx';
 import './index.css'; // Seu CSS global
 import { TonConnectUIProvider } from '@tonconnect/ui-react';
 
