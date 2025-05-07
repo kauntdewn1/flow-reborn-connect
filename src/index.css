@@ -1,82 +1,135 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&display=swap');
 
 body {
-  margin: 0;
-  font-family: 'VT323', monospace;
   background-color: #0A0A0A;
-  color: #00FF9F;
+  color: #E0E0E0;
+  font-family: 'Fira Code', monospace;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-shadow: 0 0 3px #00FF9F;
 }
 
-/* Tela tremendo */
-@keyframes screen-shake-animation {
-  0% { transform: translate(1px, 1px) rotate(0deg); }
-  10% { transform: translate(-1px, -2px) rotate(-0.5deg); }
-  20% { transform: translate(-3px, 0px) rotate(0.5deg); }
-  30% { transform: translate(3px, 2px) rotate(0deg); }
-  40% { transform: translate(1px, -1px) rotate(0.5deg); }
-  50% { transform: translate(-1px, 2px) rotate(-0.5deg); }
-  60% { transform: translate(-3px, 1px) rotate(0deg); }
-  70% { transform: translate(3px, 1px) rotate(-0.5deg); }
-  80% { transform: translate(-1px, -1px) rotate(0.5deg); }
-  90% { transform: translate(1px, 2px) rotate(0deg); }
-  100% { transform: translate(1px, -2px) rotate(-0.5deg); }
+.text-glitch {
+  color: #00FFFF;
+  text-shadow:
+    0 0 2px #00FFFF,
+    0 0 4px #00FFFF,
+    0 0 6px #00FFFF;
+}
+
+.text-danger {
+  color: #FF0055;
+  text-shadow:
+    0 0 2px #FF0055,
+    0 0 4px #FF0055;
+}
+
+.glitch-shadow {
+  text-shadow:
+    1px 1px 0 #ff0055,
+    -1px -1px 0 #00ffff;
+}
+
+.app-container {
+  transition: all 0.5s ease-out;
+  position: relative;
+  z-index: 10;
 }
 
 .screen-shake-effect {
   animation: screen-shake-animation 0.5s infinite;
 }
 
-/* Glitch do fundo (background-piscando) */
-@keyframes text-glitch-bg-animation {
-  0% { background-position: 0 0; opacity: 0.6; }
-  25% { background-position: 10px -10px; opacity: 0.4; }
-  50% { background-position: -10px 10px; opacity: 0.6; }
-  75% { background-position: 5px 5px; opacity: 0.3; }
-  100% { background-position: 0 0; opacity: 0.5; }
-}
-
 .text-glitch-background-effect::before {
-  content: 'SYSTEM32.EXE // KERNEL PANIC // VIRUS DETECTED // PAYLOAD INJECTED';
+  content: 'SYSTEM32.EXE // VIRUS DETECTED // PAYLOAD INJECTED';
   position: absolute;
   top: 0;
   left: 0;
-  font-size: 10px;
-  opacity: 0.05;
+  font-size: 0.75rem;
+  opacity: 0.03;
   width: 100%;
   height: 100%;
   z-index: 0;
   pointer-events: none;
   background: repeating-linear-gradient(
     0deg,
-    #00FF9F,
-    #00FF9F 1px,
-    transparent 1px,
+    #00ffff 1px,
     transparent 2px
   );
-  animation: text-glitch-bg-animation 3s infinite;
-}
-
-/* Glow de terminal psicótico */
-@keyframes terminal-glow-animation {
-  0%, 100% {
-    box-shadow: 0 0 5px #00FF9F, 0 0 10px #00FF9F, 0 0 15px #00FF9F;
-  }
-  50% {
-    box-shadow: 0 0 10px #00FF9F, 0 0 20px #00FF9F, 0 0 30px #00FF9F;
-  }
+  animation: text-glitch-bg-animation 4s infinite;
 }
 
 .terminal-glow-effect {
-  animation: terminal-glow-animation 2s ease-in-out infinite;
+  animation: terminal-glow-animation 2.5s ease-in-out infinite;
 }
 
-/* Transições suaves quando classes mudam */
-.app-container {
-  transition: all 0.5s ease-out;
+.btn-glitch {
+  padding: 0.75rem 1.5rem;
+  color: white;
+  font-weight: bold;
+  border-radius: 0.75rem;
+  border: 2px solid #00ffff;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s;
+  background-image: linear-gradient(to right, #00ffff, #0040ff);
 }
+
+.btn-glitch:hover {
+  filter: brightness(1.1);
+  transform: scale(1.05);
+  box-shadow: 0 0 20px #00ffff99;
+}
+
+.word-glitch span {
+  position: relative;
+}
+
+.word-glitch span::before,
+.word-glitch span::after {
+  content: attr(data-text);
+  position: absolute;
+  left: 0;
+  right: 0;
+  opacity: 0.3;
+}
+
+.word-glitch span::before {
+  color: #ff0055;
+  transform: translateX(-2px);
+  z-index: -1;
+}
+
+.word-glitch span::after {
+  color: #00ffff;
+  transform: translateX(2px);
+  z-index: -1;
+}
+
+@keyframes screen-shake-animation {
+  0% { transform: translate(1px, 1px); }
+  10% { transform: translate(-1px, -2px); }
+  20% { transform: translate(-3px, 0px); }
+  30% { transform: translate(3px, 2px); }
+  40% { transform: translate(1px, -1px); }
+  50% { transform: translate(-1px, 2px); }
+  60% { transform: translate(-3px, 1px); }
+  70% { transform: translate(3px, 1px); }
+  80% { transform: translate(-1px, -1px); }
+  90% { transform: translate(1px, 2px); }
+  100% { transform: translate(1px, -2px); }
+}
+
+@keyframes text-glitch-bg-animation {
+  0%, 100% { background-position: 0 0; opacity: 0.05; }
+  50% { background-position: 5px -5px; opacity: 0.1; }
+}
+
+@keyframes terminal-glow-animation {
+  0%, 100% {
+    box-shadow: 0 0 5px #00FFFF, 0 0 10px #00FFFF, 0 0 15px #00FFFF;
+  }
+  50% {
+    box-shadow: 0 0 10px #00FFFF, 0 0 20px #00FFFF, 0 0 30px #00FFFF;
+  }
+}
+
+  
