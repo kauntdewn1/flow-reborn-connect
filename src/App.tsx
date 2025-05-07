@@ -4,6 +4,7 @@ import DebtBar from './components/DebtBar';
 import MissionUnlock from './components/MissionUnlock';
 import { TonConnectButton, useTonWallet } from '@tonconnect/ui-react';
 import { motion } from 'framer-motion';
+import './app.css';
 
 const levels = [
   { name: "Recruta Falido", xpRequired: 0 },
