@@ -2,40 +2,43 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion'; // Import motion and AnimatePresence
 
 interface ClickToHackProps {
-  onHackSuccess: (xpGained: number, fragmentsGained: number) => void;
+  onHackSuccess: (xp: number, fragments: number) => void;
 }
 
-const ClickToHack: React.FC<ClickToHackProps> = ({ onHackSuccess }) => {
+export default function ClickToHack({ onHackSuccess }: ClickToHackProps) {
+  const [isHacking, setIsHacking] = useState(false);
   const [feedbackText, setFeedbackText] = useState<string | null>(null);
   const [feedbackKey, setFeedbackKey] = useState(0); // To re-trigger animation
 
-  const handleHack = () => {
-    // Lógica de Simulação de Hack
-    const xpEarned = Math.floor(Math.random() * 10) + 1; // Ganha de 1 a 10 XP
-    const fragmentsEarned = Math.random() > 0.7 ? Math.floor(Math.random() * 3) + 1 : 0; // 30% de chance de ganhar 1-3 fragmentos
-
-    onHackSuccess(xpEarned, fragmentsEarned);
-
-    const feedback = `+${xpEarned} XP${fragmentsEarned > 0 ? `, +${fragmentsEarned} Frag.` : ''}`;
+  const handleClick = () => {
+    if (isHacking) return;
+    
+    setIsHacking(true);
+    const xpGained = Math.floor(Math.random() * 10) + 1;
+    const fragmentsGained = Math.floor(Math.random() * 5) + 1;
+    
+    onHackSuccess(xpGained, fragmentsGained);
+    
+    const feedback = `+${xpGained} XP, +${fragmentsGained} Frag.`;
     setFeedbackText(feedback);
     setFeedbackKey(prev => prev + 1); // Increment key to re-trigger animation
-
-    // Limpar feedback após um tempo
+    
     setTimeout(() => {
-      setFeedbackText(null);
-    }, 1500);
+      setIsHacking(false);
+    }, 1000);
   };
 
   return (
-    <div className="my-6 flex flex-col items-center select-none">
-      <motion.button
-        onClick={handleHack}
-        className="px-8 py-4 bg-accent-glitch hover:bg-accent-glitch/80 text-terminal-bg font-bold text-xl rounded-lg shadow-lg shadow-accent-glitch/30 active:shadow-accent-glitch/10 transition-all duration-150 ease-in-out transform active:scale-95 focus:outline-none focus:ring-2 focus:ring-accent-glitch focus:ring-opacity-50"
-        whileHover={{ scale: 1.05, transition: { duration: 0.2 } }}
-        whileTap={{ scale: 0.95 }}
-      >
-        HACKEAR SISTEMA
-      </motion.button>
+    <div className="relative">
+      <div className="circle-outer" onClick={handleClick}>
+        <div className="circle-inner">
+          <img src="/hacker.png" alt="Hacker" className="w-32 h-32 object-contain" />
+        </div>
+      </div>
+      <div className="dot"></div>
+      {isHacking && (
+        <div className="absolute float-xp text-3xl font-bold text-accent-glitch">+XP</div>
+      )}
       <AnimatePresence>
         {feedbackText && (
           <motion.div
@@ -54,6 +57,4 @@ const ClickToHack: React.FC<ClickToHackProps> = ({ onHackSuccess }) => {
       </p>
     </div>
   );
-};
-
-export default ClickToHack;
+}
