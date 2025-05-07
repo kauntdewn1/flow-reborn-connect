@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>REBORN GRINDER // SYSTEM32.EXE</title>
+    
+    <!-- Fonts sujas -->
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet" />
+    
+    <!-- Meta para ferver cabeças -->
+    <meta name="description" content="Experimento digital corrompido. Não recomendado para humanos frágeis.">
+    <meta name="theme-color" content="#00FF9F" />
+    
+    <!-- Estilo terminal direto -->
+    <style>
+      html, body {
+        margin: 0;
+        padding: 0;
+        font-family: 'VT323', monospace;
+        background-color: #0A0A0A;
+        color: #00FF9F;
+        text-shadow: 0 0 3px #00FF9F;
+        overflow-x: hidden;
+      }
+
+      #root::before {
+        content: "CARREGANDO INTERFACE // SYSTEM32.EXE";
+        display: block;
+        font-size: 12px;
+        color: #FF003C;
+        text-align: center;
+        margin-top: 20px;
+        animation: pulse-text 1.2s infinite;
+      }
+
+      @keyframes pulse-text {
+        0%, 100% { opacity: 0.2; }
+        50% { opacity: 1; }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
