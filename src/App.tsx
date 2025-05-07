@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import ClickToHack from './components/ClickToHack';
 import DebtBar from './components/DebtBar';
-import MissionUnlock, { Mission } from './components/MissionUnlock';
+import MissionUnlock from './components/MissionUnlock';
 import { TonConnectButton, useTonWallet } from '@tonconnect/ui-react';
 import { motion } from 'framer-motion';
 
@@ -20,7 +20,7 @@ function App() {
   const [currentDebt, setCurrentDebt] = useState<number>(initialDebtAmount);
   const [currentLevel, setCurrentLevel] = useState(levels[0]);
   const [progressPercent, setProgressPercent] = useState(0);
-  const [appKey, setAppKey] = useState(0);
+  const [appKey] = useState(0);
   const [clicks, setClicks] = useState<{ id: number, x: number, y: number }[]>([]);
   const [timerCountdown, setTimerCountdown] = useState('');
   const wallet = useTonWallet();
@@ -79,8 +79,8 @@ function App() {
     setClicks(prev => prev.filter(click => click.id !== id));
   };
 
-  function handlePayDebtWithTon(arg0: number): void {
-    throw new Error('Function not implemented.');
+  function handlePayDebtWithTon(amount: number): void {
+    setCurrentDebt(prev => Math.max(0, prev - amount));
   }
 
   return (
@@ -113,7 +113,7 @@ function App() {
 
         <ClickToHack onHackSuccess={handleHackSuccess} />
 
-        <MissionUnlock availableMissions={[]} currentLevelName={currentLevel.name} currentXp={xp} />
+        <MissionUnlock availableMissions={[]} currentXp={xp} />
       </main>
 
       <footer className="relative z-10 w-full max-w-2xl text-center mt-auto pt-6">
