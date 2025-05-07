@@ -45,29 +45,21 @@ function App() {
   const wallet = useTonWallet();
 
   useEffect(() => {
-    const savedXp = localStorage.getItem('rebornGrinderXp');
-    const savedFragments = localStorage.getItem('rebornGrinderFragments');
-    const savedDebt = localStorage.getItem('rebornGrinderDebt');
-    const savedMissionsState = localStorage.getItem('rebornGrinderMissions');
-
-    if (savedXp) setXp(parseInt(savedXp, 10));
-    if (savedFragments) setFragments(parseInt(savedFragments, 10));
-    if (savedDebt) setCurrentDebt(parseInt(savedDebt, 10));
-    if (savedMissionsState) {
-      try {
-        const missionList: Mission[] = JSON.parse(savedMissionsState);
-        setMissions(missionList);
-      } catch (e) {
-        console.error('Erro ao carregar missões salvas', e);
-      }
+    const saved = localStorage.getItem('reborn_grinder');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      setXp(parsed.xp || 0);
+      setFragments(parsed.fragments || 0);
+      setCurrentDebt(parsed.debt || initialDebtAmount);
     }
   }, []);
 
   useEffect(() => {
-    localStorage.setItem('rebornGrinderXp', xp.toString());
-    localStorage.setItem('rebornGrinderFragments', fragments.toString());
-    localStorage.setItem('rebornGrinderDebt', currentDebt.toString());
-    localStorage.setItem('rebornGrinderMissions', JSON.stringify(missions));
+    localStorage.setItem('reborn_grinder', JSON.stringify({ 
+      xp, 
+      debt: currentDebt, 
+      fragments 
+    }));
 
     const newLevel = levels.slice().reverse().find(level => xp >= level.xpRequired) || levels[0];
     setCurrentLevel(newLevel);
@@ -78,7 +70,7 @@ function App() {
     const nextXP = nextLevel ? nextLevel.xpRequired : xp;
     const progress = nextLevel ? ((xp - prevXP) / (nextXP - prevXP)) * 100 : 100;
     setProgressPercent(Math.min(100, Math.max(0, progress)));
-  }, [xp, fragments, currentDebt, missions]);
+  }, [xp, fragments, currentDebt]);
 
   useEffect(() => {
     const now = new Date();
@@ -120,14 +112,24 @@ function App() {
 
   return (
     <motion.div key={appKey} className="relative bg-black text-white min-h-screen p-4 flex flex-col items-center justify-center overflow-hidden">
+      {/* Corrigido: Removido VisualEffect inexistente */}
+      
       <motion.div className="absolute inset-0 z-0 bg-cover bg-center opacity-10"
         style={{ backgroundImage: `url("${bgImage}")` }}
-        animate={{ scale: [1, 1.02, 1], y: [0, -20, 0] }}
-        transition={{ duration: 20, repeat: Infinity }}
+        animate={{ 
+          scale: [1, 1.02, 1],
+          y: [0, -20, 0],
+          opacity: [0.8, 1, 0.8]
+        }}
+        transition={{ 
+          duration: 20,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
       />
 
       <header className="relative z-10 w-full max-w-4xl mx-auto text-center mb-6">
-        <h1 className="text-4xl md:text-5xl font-black bg-gradient-to-r from-accent-glitch to-danger-text bg-clip-text text-transparent">
+        <h1 className="text-4xl md:text-5xl font-black bg-gradient-to-r from-accent-glitch to-danger-text bg-clip-text text-transparent glitch tracking-wider">
           REBORN GRINDER // SYSTEM32.EXE
         </h1>
         <TonConnectButton />
@@ -153,11 +155,13 @@ function App() {
           <div className="whitespace-pre leading-tight">
             <span className="text-accent-glitch font-bold">&gt; {currentLevel.name.toUpperCase()}</span>{"  "}
             <br />
-            XP: {xp} {getProgressBar(progressPercent)}
+            <span className="text-green-400">⚡ XP: {xp}</span> {getProgressBar(progressPercent)}
             <br />
-            PRÓXIMO: {timerCountdown}
+            <span className="text-yellow-400">🧩 Fragments: {fragments}</span>
             <br />
-            DÍVIDA: {currentDebt.toLocaleString()} TON
+            <span className="text-red-400">💸 Dívida: {currentDebt.toLocaleString()} TON</span>
+            <br />
+            <span className="text-cyan-400">⏰ PRÓXIMO: {timerCountdown}</span>
           </div>
         </div>
 
@@ -189,7 +193,7 @@ function App() {
 
       <footer className="relative z-10 w-full max-w-2xl text-center mt-auto pt-6">
         <p className="text-xs text-white/40 uppercase tracking-wider">
-          Interface corrompida. Prossiga por sua conta e risco.
+          SYSTEM32.CORRUPTED // ALL LOGS COMPROMISED
         </p>
       </footer>
 
@@ -199,6 +203,8 @@ function App() {
           +XP
         </div>
       ))}
+
+      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-accent-glitch to-transparent animate-pulse" />
     </motion.div>
   );
 }
