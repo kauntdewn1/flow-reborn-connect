@@ -3,7 +3,7 @@ import ClickToHack from './components/ClickToHack';
 import DebtBar from './components/DebtBar';
 import MissionUnlock from './components/MissionUnlock';
 import { TonConnectButton, useTonWallet } from '@tonconnect/ui-react';
-import { motion } from 'framer-motion';
+import { motion } from "framer-motion";
 
 // Imagens e ícones
 const logoReborn = 'https://res.cloudinary.com/decskr6ey/image/upload/v1746598594/logo-reborn_pfdio9.png';
