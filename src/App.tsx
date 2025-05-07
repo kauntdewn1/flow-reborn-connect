@@ -5,8 +5,17 @@ import MissionUnlock from './components/MissionUnlock';
 import { TonConnectButton, useTonWallet } from '@tonconnect/ui-react';
 import { motion } from 'framer-motion';
 
-const bgImage = 'https://res.cloudinary.com/decskr6ey/image/upload/v1746600060/bg_geral_otapkg.png';
+// Imagens e ícones
+const logoReborn = 'https://res.cloudinary.com/decskr6ey/image/upload/v1746598594/logo-reborn_pfdio9.png';
+const iconHack = 'https://res.cloudinary.com/decskr6ey/image/upload/v1746598717/hack_f4cw0x.png';
+const iconDebt = 'https://res.cloudinary.com/decskr6ey/image/upload/v1746599089/DIVIDA_opojqz.png';
+const iconFragments = 'https://res.cloudinary.com/decskr6ey/image/upload/v1746599166/FRAG_wlaotb.png';
+const iconGlitch = 'https://res.cloudinary.com/decskr6ey/image/upload/v1746599367/glitch_heokdq.png';
+const iconMissions = 'https://res.cloudinary.com/decskr6ey/image/upload/v1746599219/MISSOES_kaqeq3.png';
+const badgeLevelUp = 'https://res.cloudinary.com/decskr6ey/image/upload/v1746599800/badget_jyrfck.png';
 const glitchBtn = 'https://res.cloudinary.com/decskr6ey/image/upload/v1746600135/button_glitch_tvrjsr.png';
+const bgNoise = 'https://res.cloudinary.com/decskr6ey/image/upload/v1746599498/bg_noise_xow8jw.png';
+const bgBunker = 'https://res.cloudinary.com/decskr6ey/image/upload/v1746600060/bg_geral_otapkg.png';
 
 type Mission = {
   id: string;
@@ -111,91 +120,84 @@ function App() {
   };
 
   return (
-    <motion.div key={appKey} className="relative bg-black text-white min-h-screen p-4 flex flex-col items-center justify-center overflow-hidden">
-      {/* Corrigido: Removido VisualEffect inexistente */}
-      
-      <motion.div className="absolute inset-0 z-0 bg-cover bg-center opacity-10"
-        style={{ backgroundImage: `url("${bgImage}")` }}
-        animate={{ 
-          scale: [1, 1.02, 1],
-          y: [0, -20, 0],
-          opacity: [0.8, 1, 0.8]
-        }}
-        transition={{ 
-          duration: 20,
-          repeat: Infinity,
-          ease: "easeInOut"
-        }}
-      />
+    <div className="relative min-h-screen bg-black text-white font-mono overflow-hidden">
+      {/* Overlay de ruído */}
+      <img src={bgNoise} alt="Noise" className="fixed inset-0 w-full h-full object-cover opacity-10 pointer-events-none z-40" />
+      <div className="scanlines" />
+      {/* Fundo bunker */}
+      <div className="absolute inset-0 z-0 bg-cover bg-center opacity-20" style={{ backgroundImage: `url('${bgBunker}')` }} />
 
-      <header className="relative z-10 w-full max-w-4xl mx-auto text-center mb-6">
-        <h1 className="text-4xl md:text-5xl font-black bg-gradient-to-r from-accent-glitch to-danger-text bg-clip-text text-transparent glitch tracking-wider">
+      {/* Header com logo e glitch */}
+      <header className="relative z-10 w-full flex flex-col items-center pt-4 pb-2">
+        <img src={logoReborn} alt="Logo Reborn" className="w-28 md:w-36 glitch-shadow drop-shadow-lg" />
+        <h1 className="text-2xl md:text-4xl font-black glitch text-accent-glitch mt-2 tracking-widest">
           REBORN GRINDER // SYSTEM32.EXE
         </h1>
         <TonConnectButton />
       </header>
 
-      <main className="relative z-10 w-full max-w-md space-y-6">
-        <div className="mb-2 font-mono text-xs text-cyan-400 flex flex-col gap-1">
-          <div>
-            <span className="text-white">[ID: </span>
-            <span className="text-accent-glitch">UQBj...8id</span>
-            <span className="text-white">]</span>
-            <span className="ml-2">[STATUS: <span className="text-yellow-400">INDEFINIDO</span>]</span>
-          </div>
-          <div>
-            <span className="text-pink-500">↯</span> PROTOCOLO ATIVO <span className="ml-2 text-gray-400">[!]</span>
-          </div>
-          <div>
-            <span className="text-gray-400">&gt;&gt;</span> <span className="text-cyan-300">Terminal seguro</span> <span className="ml-2 text-fuchsia-400">Ω</span>
-          </div>
+      {/* HUD com ícones */}
+      <div className="relative z-10 flex items-center gap-4 mt-4 bg-black/60 rounded-lg px-4 py-2 border border-cyan-700 shadow-lg mx-auto w-fit">
+        <img src={iconGlitch} className="w-5 h-5" alt="XP" />
+        <span className="text-green-400 font-mono">XP: {xp}</span>
+        <img src={iconFragments} className="w-5 h-5" alt="Fragments" />
+        <span className="text-yellow-400 font-mono">Fragments: {fragments}</span>
+        <img src={iconDebt} className="w-5 h-5" alt="Dívida" />
+        <span className="text-red-400 font-mono">Dívida: {currentDebt} TON</span>
+      </div>
+
+      {/* Barra de dívida dinâmica */}
+      <div className="relative z-10 flex items-center gap-2 mt-4 mx-auto w-11/12 max-w-lg">
+        <img src={iconDebt} className="w-6 h-6" alt="Dívida" />
+        <div className="relative w-full h-4 bg-gray-900 rounded overflow-hidden border border-cyan-400/30">
+          <div
+            className="progress-gradient h-full transition-all duration-500"
+            style={{ width: `${100 - (currentDebt / 10000) * 100}%` }}
+          />
+          <span className="absolute left-2 top-1/2 -translate-y-1/2 text-xs text-cyan-300 font-mono">
+            {currentDebt.toLocaleString()} TON
+          </span>
         </div>
+      </div>
 
-        <div className="bg-black/70 p-4 rounded-xl border border-cyan-400/30 text-left font-mono">
-          <div className="whitespace-pre leading-tight">
-            <span className="text-accent-glitch font-bold">&gt; {currentLevel.name.toUpperCase()}</span>{"  "}
-            <br />
-            <span className="text-green-400">⚡ XP: {xp}</span> {getProgressBar(progressPercent)}
-            <br />
-            <span className="text-yellow-400">🧩 Fragments: {fragments}</span>
-            <br />
-            <span className="text-red-400">💸 Dívida: {currentDebt.toLocaleString()} TON</span>
-            <br />
-            <span className="text-cyan-400">⏰ PRÓXIMO: {timerCountdown}</span>
-          </div>
+      {/* Botão de hack glitch */}
+      <div className="relative z-10 flex justify-center mt-6">
+        <button
+          className="btn-glitch w-60 py-3 text-lg font-bold tracking-widest flex items-center justify-center gap-2 shadow-xl border-2 border-cyan-400"
+          onClick={() => {
+            setXp(xp + 10);
+            setFragments(fragments + 1);
+            setCurrentDebt(Math.max(0, currentDebt - 100));
+          }}
+          style={{ backgroundImage: `url('${glitchBtn}')`, backgroundSize: 'cover' }}
+        >
+          <img src={iconHack} className="w-6 h-6" alt="Hack" />
+          HACK
+        </button>
+      </div>
+
+      {/* Missões com ícone e badge */}
+      <div className="relative z-10 mt-8 mx-auto w-11/12 max-w-lg">
+        <div className="flex items-center gap-2 mb-2">
+          <img src={iconMissions} className="w-5 h-5" alt="Missões" />
+          <span className="font-mono text-cyan-300">Missões</span>
         </div>
+        <div className="space-y-2">
+          {missions.map(m => (
+            <div
+              key={m.id}
+              className={`flex items-center gap-2 p-2 rounded border ${xp >= m.rewardXp ? 'border-cyan-400 bg-cyan-900/20' : 'border-gray-700 bg-gray-800/40 opacity-60'}`}
+            >
+              <span className="font-bold text-white">{m.title}</span>
+              {m.isCompleted && <img src={badgeLevelUp} className="w-4 h-4" alt="Level Up" />}
+              <span className="ml-auto text-xs text-gray-400">{xp >= m.rewardXp ? '✔️' : '🔒'}</span>
+            </div>
+          ))}
+        </div>
+      </div>
 
-        <DebtBar currentDebt={currentDebt} initialDebt={initialDebtAmount} />
-
-        {wallet && currentDebt > 0 && (
-          <button
-            onClick={() => handlePayDebtWithTon(100)}
-            className="w-full py-3 px-6 rounded-xl border-2 text-white font-bold transition-transform hover:scale-105 shadow-xl"
-            style={{
-              backgroundImage: `url(${glitchBtn})`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              borderColor: '#FF0040',
-              boxShadow: '0 0 20px rgba(255,0,64,0.5)'
-            }}
-          >
-            💸 Quitar 100 TON da Dívida
-          </button>
-        )}
-
-        <ClickToHack onHackSuccess={handleHackSuccess} />
-
-        <MissionUnlock
-          availableMissions={missions.filter(m => !m.isCompleted)}
-          onMissionComplete={handleMissionComplete}
-        />
-      </main>
-
-      <footer className="relative z-10 w-full max-w-2xl text-center mt-auto pt-6">
-        <p className="text-xs text-white/40 uppercase tracking-wider">
-          SYSTEM32.CORRUPTED // ALL LOGS COMPROMISED
-        </p>
-      </footer>
+      {/* Overlay scanlines */}
+      <div className="scanlines pointer-events-none absolute inset-0 z-50" />
 
       {clicks.map((click) => (
         <div key={click.id} className="absolute text-3xl font-bold text-accent-glitch pointer-events-none animate-pulse"
@@ -205,7 +207,7 @@ function App() {
       ))}
 
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-accent-glitch to-transparent animate-pulse" />
-    </motion.div>
+    </div>
   );
 }
 
