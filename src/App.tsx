@@ -13,6 +13,12 @@ const iconMissions = 'https://res.cloudinary.com/decskr6ey/image/upload/v1746599
 const badgeLevelUp = 'https://res.cloudinary.com/decskr6ey/image/upload/v1746599800/badget_jyrfck.png';
 const bgNoise = 'https://res.cloudinary.com/decskr6ey/image/upload/v1746599498/bg_noise_xow8jw.png';
 const bgBunker = 'https://res.cloudinary.com/decskr6ey/image/upload/v1746600060/bg_geral_otapkg.png';
+const avatarGlitch = 'https://res.cloudinary.com/decskr6ey/image/upload/v1746600135/avatar_glitch_tvrjsr.png';
+
+// Sons
+const playSound = (sound: string) => {
+  new Audio(sound).play().catch(() => {});
+};
 
 type Mission = {
   id: string;
@@ -95,94 +101,107 @@ function App() {
       x: Math.random() * window.innerWidth,
       y: Math.random() * window.innerHeight
     }]);
+    playSound('/sounds/hack.mp3');
   };
 
   const handleMissionComplete = (missionId: string, gainedXp: number, gainedFragments: number) => {
     setXp(prev => prev + gainedXp);
     setFragments(prev => prev + gainedFragments);
     setMissions(prev => prev.map(m => m.id === missionId ? { ...m, isCompleted: true } : m));
+    playSound('/sounds/mission-complete.mp3');
   };
 
   return (
     <div className="relative min-h-screen bg-black text-white font-mono overflow-hidden">
       {/* Overlay de ruído */}
-      <img src={bgNoise} alt="Noise" className="fixed inset-0 w-full h-full object-cover opacity-10 pointer-events-none z-40" />
+      <img src={bgNoise} alt="Noise" className="fixed inset-0 w-full h-full object-cover opacity-10 pointer-events-none z-0 mix-blend-overlay" />
       <div className="scanlines" />
+      
       {/* Fundo bunker */}
       <div className="absolute inset-0 z-0 bg-cover bg-center opacity-20" style={{ backgroundImage: `url('${bgBunker}')` }} />
 
-      {/* Header com logo e glitch */}
-      <header className="relative z-10 w-full flex flex-col items-center pt-4 pb-2">
-        <img src={logoReborn} alt="Logo Reborn" className="w-28 md:w-36 glitch-shadow drop-shadow-lg" />
-        <h1 className="text-2xl md:text-4xl font-black glitch text-accent-glitch mt-2 tracking-widest">
-          REBORN GRINDER // SYSTEM32.EXE
-        </h1>
-        <TonConnectButton />
-      </header>
-
-      {/* HUD com ícones */}
-      <div className="relative z-10 flex items-center gap-4 mt-4 bg-black/60 rounded-lg px-4 py-2 border border-cyan-700 shadow-lg mx-auto w-fit">
-        <img src={iconGlitch} className="w-5 h-5" alt="XP" />
-        <span className="text-green-400 font-mono">XP: {xp}</span>
-        <img src={iconFragments} className="w-5 h-5" alt="Fragments" />
-        <span className="text-yellow-400 font-mono">Fragments: {fragments}</span>
-        <img src={iconDebt} className="w-5 h-5" alt="Dívida" />
-        <span className="text-red-400 font-mono">Dívida: {currentDebt} TON</span>
-      </div>
-
-      {/* Barra de progresso */}
-      <div className="relative z-10 mt-2 mx-auto w-11/12 max-w-lg bg-black/40 rounded-lg p-2">
-        <div className="flex justify-between items-center mb-1">
-          <div className="text-xs text-cyan-400">Progresso: {progressPercent.toFixed(0)}%</div>
-          <div className="flex items-center gap-2">
-            <div className="text-xs text-yellow-400 font-bold">{currentLevel.name}</div>
-            {progressPercent === 100 && (
-              <img src={badgeLevelUp} alt="Level Up" className="w-4 h-4 animate-pulse" />
-            )}
+      {/* HUD Fixo */}
+      <div className="fixed top-0 left-0 w-full bg-black/80 border-b border-accent-glitch z-50 px-4 py-2 flex justify-between items-center text-primary-text font-mono text-xs sm:text-sm shadow-lg backdrop-blur-sm">
+        <div className="flex items-center gap-4">
+          <img src={avatarGlitch} alt="Avatar" className="w-8 h-8 rounded-full border-2 border-accent-glitch animate-pulse" />
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+            <div className="flex items-center gap-1">
+              <img src={iconGlitch} className="w-4 h-4" alt="XP" />
+              <span className="text-xp-bar font-bold">{xp}</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <img src={iconFragments} className="w-4 h-4" alt="Fragments" />
+              <span className="text-accent-glitch font-bold">{fragments}</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <img src={iconDebt} className="w-4 h-4" alt="Dívida" />
+              <span className="text-ton-debt font-bold">{currentDebt}</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <span className="text-danger-text font-bold">{currentLevel.name}</span>
+              {progressPercent === 100 && (
+                <img src={badgeLevelUp} alt="Level Up" className="w-4 h-4 animate-spin" />
+              )}
+            </div>
           </div>
         </div>
-        <div className="h-2 bg-black/60 rounded-full overflow-hidden">
-          <div 
-            className="h-full bg-gradient-to-r from-cyan-500 to-blue-500 transition-all duration-300"
-            style={{ width: `${progressPercent}%` }}
-          />
+        <TonConnectButton />
+      </div>
+
+      {/* Conteúdo Principal */}
+      <main className="pt-20 px-4">
+        {/* Logo e Título */}
+        <div className="flex flex-col items-center mb-8">
+          <img src={logoReborn} alt="Logo Reborn" className="w-28 md:w-36 glitch-shadow drop-shadow-lg" />
+          <h1 className="text-2xl md:text-4xl font-black glitch text-accent-glitch mt-2 tracking-widest">
+            REBORN GRINDER // SYSTEM32.EXE
+          </h1>
         </div>
-      </div>
 
-      {/* Barra de dívida dinâmica com componente */}
-      <div className="relative z-10 flex items-center gap-2 mt-4 mx-auto w-11/12 max-w-lg">
-        <img src={iconDebt} className="w-6 h-6" alt="Dívida" />
-        <DebtBar currentDebt={currentDebt} initialDebt={initialDebtAmount} />
-      </div>
-
-      {/* Botão de hack glitch com ClickToHack */}
-      <div className="relative z-10 flex justify-center mt-6">
-        <ClickToHack onHackSuccess={handleHackSuccess} />
-      </div>
-
-      {/* Missões com componente visual aprimorado */}
-      <div className="relative z-10 mt-8 mx-auto w-11/12 max-w-lg">
-        <div className="flex items-center gap-2 mb-2">
-          <img src={iconMissions} className="w-5 h-5" alt="Missões" />
-          <h2 className="text-lg font-bold text-cyan-400">MISSÕES DISPONÍVEIS</h2>
+        {/* Barra de dívida dinâmica */}
+        <div className="relative z-10 flex items-center gap-2 mt-4 mx-auto w-11/12 max-w-lg">
+          <img src={iconDebt} className="w-6 h-6" alt="Dívida" />
+          <DebtBar currentDebt={currentDebt} initialDebt={initialDebtAmount} />
         </div>
-        <MissionUnlock
-          availableMissions={missions.filter(m => !m.isCompleted)}
-          onMissionComplete={handleMissionComplete}
-        />
-      </div>
+
+        {/* Botão de hack */}
+        <div className="relative z-10 flex justify-center mt-6">
+          <ClickToHack onHackSuccess={handleHackSuccess} />
+        </div>
+
+        {/* Missões */}
+        <div className="relative z-10 mt-8 mx-auto w-11/12 max-w-lg">
+          <div className="flex items-center gap-2 mb-4">
+            <img src={iconMissions} className="w-5 h-5" alt="Missões" />
+            <h2 className="text-lg font-bold text-cyan-400 border-l-4 border-red-500 pl-2">MISSÕES DISPONÍVEIS</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <MissionUnlock
+              availableMissions={missions.filter(m => !m.isCompleted)}
+              onMissionComplete={handleMissionComplete}
+            />
+          </div>
+        </div>
+      </main>
 
       {/* Overlay scanlines */}
-      <div className="scanlines pointer-events-none absolute inset-0 z-50" />
+      <div className="scanlines pointer-events-none fixed inset-0 z-50" />
 
+      {/* Animações de XP */}
       {clicks.map((click) => (
-        <div key={click.id} className="absolute text-3xl font-bold text-accent-glitch pointer-events-none animate-pulse"
-          style={{ top: `${click.y}px`, left: `${click.x}px` }}>
+        <div key={click.id} 
+          className="absolute text-3xl font-bold text-accent-glitch pointer-events-none animate-pulse"
+          style={{ 
+            top: `${click.y}px`, 
+            left: `${click.x}px`,
+            textShadow: '0 0 10px #0ff, 0 0 20px #0ff'
+          }}>
           +XP
         </div>
       ))}
 
-      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-accent-glitch to-transparent animate-pulse" />
+      {/* Barra de progresso superior */}
+      <div className="fixed top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-accent-glitch to-transparent animate-pulse z-50" />
     </div>
   );
 }
