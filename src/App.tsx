@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import ClickToHack from './components/ClickToHack';
 import DebtBar from './components/DebtBar';
-import MissionUnlock from './components/MissionUnlock';
+import MissionCard from './components/MissionCard';
 import { TonConnectButton } from '@tonconnect/ui-react';
 
 // Imagens e ícones
@@ -121,26 +121,26 @@ function App() {
       <div className="absolute inset-0 z-0 bg-cover bg-center opacity-20" style={{ backgroundImage: `url('${bgBunker}')` }} />
 
       {/* HUD Fixo */}
-      <div className="fixed top-0 left-0 w-full bg-black/80 border-b border-accent-glitch z-50 px-4 py-2 flex justify-between items-center text-primary-text font-mono text-xs sm:text-sm shadow-lg backdrop-blur-sm">
-        <div className="flex items-center gap-4">
-          <img src={avatarGlitch} alt="Avatar" className="w-8 h-8 rounded-full border-2 border-accent-glitch animate-pulse" />
-          <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-            <div className="flex items-center gap-1">
-              <img src={iconGlitch} className="w-4 h-4" alt="XP" />
+      <div className="fixed top-0 left-0 w-full bg-black/80 border-b border-accent-glitch z-50 px-6 py-3 flex justify-between items-center text-primary-text font-mono text-xs sm:text-sm shadow-lg shadow-accent-glitch/40 backdrop-blur-sm">
+        <div className="flex items-center gap-6">
+          <img src={avatarGlitch} alt="Avatar" className="w-10 h-10 rounded-full border-2 border-accent-glitch animate-pulse shadow-lg shadow-accent-glitch/30" />
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+            <div className="flex items-center gap-2">
+              <img src={iconGlitch} className="w-5 h-5" alt="XP" />
               <span className="text-xp-bar font-bold">{xp}</span>
             </div>
-            <div className="flex items-center gap-1">
-              <img src={iconFragments} className="w-4 h-4" alt="Fragments" />
+            <div className="flex items-center gap-2">
+              <img src={iconFragments} className="w-5 h-5" alt="Fragments" />
               <span className="text-accent-glitch font-bold">{fragments}</span>
             </div>
-            <div className="flex items-center gap-1">
-              <img src={iconDebt} className="w-4 h-4" alt="Dívida" />
+            <div className="flex items-center gap-2">
+              <img src={iconDebt} className="w-5 h-5" alt="Dívida" />
               <span className="text-ton-debt font-bold">{currentDebt}</span>
             </div>
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-2">
               <span className="text-danger-text font-bold">{currentLevel.name}</span>
               {progressPercent === 100 && (
-                <img src={badgeLevelUp} alt="Level Up" className="w-4 h-4 animate-spin" />
+                <img src={badgeLevelUp} alt="Level Up" className="w-5 h-5 animate-spin" />
               )}
             </div>
           </div>
@@ -149,37 +149,42 @@ function App() {
       </div>
 
       {/* Conteúdo Principal */}
-      <main className="pt-20 px-4">
+      <main className="pt-24 px-6 max-w-3xl mx-auto space-y-10 z-10 relative">
         {/* Logo e Título */}
-        <div className="flex flex-col items-center mb-8">
-          <img src={logoReborn} alt="Logo Reborn" className="w-28 md:w-36 glitch-shadow drop-shadow-lg" />
-          <h1 className="text-2xl md:text-4xl font-black glitch text-accent-glitch mt-2 tracking-widest">
+        <div className="flex flex-col items-center space-y-2">
+          <img src={logoReborn} alt="Logo Reborn" className="w-24 md:w-32 glitch-shadow" />
+          <h1 className="text-4xl md:text-5xl font-black text-accent-glitch animate-pulse bg-gradient-to-r from-accent-glitch to-danger-text bg-clip-text text-transparent tracking-widest drop-shadow-lg">
             REBORN GRINDER // SYSTEM32.EXE
           </h1>
         </div>
 
-        {/* Barra de dívida dinâmica */}
-        <div className="relative z-10 flex items-center gap-2 mt-4 mx-auto w-11/12 max-w-lg">
-          <img src={iconDebt} className="w-6 h-6" alt="Dívida" />
-          <DebtBar currentDebt={currentDebt} initialDebt={initialDebtAmount} />
-        </div>
-
-        {/* Botão de hack */}
-        <div className="relative z-10 flex justify-center mt-6">
-          <ClickToHack onHackSuccess={handleHackSuccess} />
-        </div>
-
-        {/* Missões */}
-        <div className="relative z-10 mt-8 mx-auto w-11/12 max-w-lg">
-          <div className="flex items-center gap-2 mb-4">
-            <img src={iconMissions} className="w-5 h-5" alt="Missões" />
-            <h2 className="text-lg font-bold text-cyan-400 border-l-4 border-red-500 pl-2">MISSÕES DISPONÍVEIS</h2>
+        <div className="space-y-12">
+          {/* Barra de dívida dinâmica */}
+          <div className="relative flex items-center gap-3 mx-auto w-full bg-black/40 rounded-lg p-4 border border-accent-glitch/30 shadow-lg shadow-accent-glitch/20">
+            <img src={iconDebt} className="w-8 h-8" alt="Dívida" />
+            <DebtBar currentDebt={currentDebt} initialDebt={initialDebtAmount} />
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <MissionUnlock
-              availableMissions={missions.filter(m => !m.isCompleted)}
-              onMissionComplete={handleMissionComplete}
-            />
+
+          {/* Botão de hack */}
+          <div className="relative flex justify-center">
+            <ClickToHack onHackSuccess={handleHackSuccess} />
+          </div>
+
+          {/* Missões */}
+          <div className="relative mx-auto w-full">
+            <div className="flex items-center gap-3 mb-8">
+              <img src={iconMissions} className="w-6 h-6" alt="Missões" />
+              <h2 className="text-xl font-bold text-cyan-400 border-l-4 border-red-500 pl-3">MISSÕES DISPONÍVEIS</h2>
+            </div>
+            <div className="grid grid-cols-1 gap-6">
+              {missions.filter(m => !m.isCompleted).map(mission => (
+                <MissionCard
+                  key={mission.id}
+                  mission={mission}
+                  onComplete={handleMissionComplete}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </main>
