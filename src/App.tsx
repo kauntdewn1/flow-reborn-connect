@@ -2,18 +2,15 @@ import { useState, useEffect } from 'react';
 import ClickToHack from './components/ClickToHack';
 import DebtBar from './components/DebtBar';
 import MissionUnlock from './components/MissionUnlock';
-import { TonConnectButton, useTonWallet } from '@tonconnect/ui-react';
-import { motion } from "framer-motion";
+import { TonConnectButton } from '@tonconnect/ui-react';
 
 // Imagens e ícones
 const logoReborn = 'https://res.cloudinary.com/decskr6ey/image/upload/v1746598594/logo-reborn_pfdio9.png';
-const iconHack = 'https://res.cloudinary.com/decskr6ey/image/upload/v1746598717/hack_f4cw0x.png';
 const iconDebt = 'https://res.cloudinary.com/decskr6ey/image/upload/v1746599089/DIVIDA_opojqz.png';
 const iconFragments = 'https://res.cloudinary.com/decskr6ey/image/upload/v1746599166/FRAG_wlaotb.png';
 const iconGlitch = 'https://res.cloudinary.com/decskr6ey/image/upload/v1746599367/glitch_heokdq.png';
 const iconMissions = 'https://res.cloudinary.com/decskr6ey/image/upload/v1746599219/MISSOES_kaqeq3.png';
 const badgeLevelUp = 'https://res.cloudinary.com/decskr6ey/image/upload/v1746599800/badget_jyrfck.png';
-const glitchBtn = 'https://res.cloudinary.com/decskr6ey/image/upload/v1746600135/button_glitch_tvrjsr.png';
 const bgNoise = 'https://res.cloudinary.com/decskr6ey/image/upload/v1746599498/bg_noise_xow8jw.png';
 const bgBunker = 'https://res.cloudinary.com/decskr6ey/image/upload/v1746600060/bg_geral_otapkg.png';
 
@@ -34,12 +31,6 @@ const levels = [
   { name: "Lorde Glitch", xpRequired: 10000 }
 ];
 
-function getProgressBar(percent: number, size = 10) {
-  const filled = Math.round((percent / 100) * size);
-  const empty = size - filled;
-  return `[${'█'.repeat(filled)}${'░'.repeat(empty)}] ${percent.toFixed(0)}%`;
-}
-
 function App() {
   const initialDebtAmount = 10000;
   const [xp, setXp] = useState<number>(0);
@@ -47,11 +38,25 @@ function App() {
   const [currentDebt, setCurrentDebt] = useState<number>(initialDebtAmount);
   const [currentLevel, setCurrentLevel] = useState(levels[0]);
   const [progressPercent, setProgressPercent] = useState(0);
-  const [appKey] = useState(0);
   const [clicks, setClicks] = useState<{ id: number, x: number, y: number }[]>([]);
-  const [timerCountdown, setTimerCountdown] = useState('');
-  const [missions, setMissions] = useState<Mission[]>([]);
-  const wallet = useTonWallet();
+  const [missions, setMissions] = useState<Mission[]>([
+    {
+      id: '1',
+      title: 'Hack Inicial',
+      description: 'Complete seu primeiro hack',
+      isCompleted: false,
+      rewardXp: 50,
+      rewardFragments: 10
+    },
+    {
+      id: '2',
+      title: 'Dívida Reduzida',
+      description: 'Reduza sua dívida em 1000 TON',
+      isCompleted: false,
+      rewardXp: 100,
+      rewardFragments: 25
+    }
+  ]);
 
   useEffect(() => {
     const saved = localStorage.getItem('reborn_grinder');
@@ -81,38 +86,21 @@ function App() {
     setProgressPercent(Math.min(100, Math.max(0, progress)));
   }, [xp, fragments, currentDebt]);
 
-  useEffect(() => {
-    const now = new Date();
-    const target = new Date();
-    target.setUTCHours(0, 0, 0, 0);
-    if (now.getUTCHours() >= 0) target.setUTCDate(target.getUTCDate() + 1);
-
-    const updateTimer = () => {
-      const diff = target.getTime() - Date.now();
-      const h = String(Math.floor(diff / 3600000)).padStart(2, '0');
-      const m = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
-      setTimerCountdown(`${h}:${m}`);
-    };
-
-    updateTimer();
-    const interval = setInterval(updateTimer, 60000);
-    return () => clearInterval(interval);
-  }, []);
-
   const handleHackSuccess = (xpGained: number, fragmentsGained: number) => {
     setXp(prev => prev + xpGained);
     setFragments(prev => prev + fragmentsGained);
     setCurrentDebt(prev => Math.max(0, prev - 100));
+    setClicks([...clicks, {
+      id: Date.now(),
+      x: Math.random() * window.innerWidth,
+      y: Math.random() * window.innerHeight
+    }]);
   };
 
   const handleMissionComplete = (missionId: string, gainedXp: number, gainedFragments: number) => {
     setXp(prev => prev + gainedXp);
     setFragments(prev => prev + gainedFragments);
     setMissions(prev => prev.map(m => m.id === missionId ? { ...m, isCompleted: true } : m));
-  };
-
-  const handlePayDebtWithTon = (amount: number) => {
-    setCurrentDebt(prev => Math.max(0, prev - amount));
   };
 
   return (
@@ -142,10 +130,29 @@ function App() {
         <span className="text-red-400 font-mono">Dívida: {currentDebt} TON</span>
       </div>
 
+      {/* Barra de progresso */}
+      <div className="relative z-10 mt-2 mx-auto w-11/12 max-w-lg bg-black/40 rounded-lg p-2">
+        <div className="flex justify-between items-center mb-1">
+          <div className="text-xs text-cyan-400">Progresso: {progressPercent.toFixed(0)}%</div>
+          <div className="flex items-center gap-2">
+            <div className="text-xs text-yellow-400 font-bold">{currentLevel.name}</div>
+            {progressPercent === 100 && (
+              <img src={badgeLevelUp} alt="Level Up" className="w-4 h-4 animate-pulse" />
+            )}
+          </div>
+        </div>
+        <div className="h-2 bg-black/60 rounded-full overflow-hidden">
+          <div 
+            className="h-full bg-gradient-to-r from-cyan-500 to-blue-500 transition-all duration-300"
+            style={{ width: `${progressPercent}%` }}
+          />
+        </div>
+      </div>
+
       {/* Barra de dívida dinâmica com componente */}
       <div className="relative z-10 flex items-center gap-2 mt-4 mx-auto w-11/12 max-w-lg">
         <img src={iconDebt} className="w-6 h-6" alt="Dívida" />
-        <DebtBar currentDebt={currentDebt} initialDebt={10000} />
+        <DebtBar currentDebt={currentDebt} initialDebt={initialDebtAmount} />
       </div>
 
       {/* Botão de hack glitch com ClickToHack */}
@@ -155,6 +162,10 @@ function App() {
 
       {/* Missões com componente visual aprimorado */}
       <div className="relative z-10 mt-8 mx-auto w-11/12 max-w-lg">
+        <div className="flex items-center gap-2 mb-2">
+          <img src={iconMissions} className="w-5 h-5" alt="Missões" />
+          <h2 className="text-lg font-bold text-cyan-400">MISSÕES DISPONÍVEIS</h2>
+        </div>
         <MissionUnlock
           availableMissions={missions.filter(m => !m.isCompleted)}
           onMissionComplete={handleMissionComplete}
